@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import { useState } from "react";
 
 function Square({ value, onSquareClick }) {
@@ -11,9 +12,7 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-export default function Board() {
-  const [square, setSquare] = useState(Array(9).fill(null));
-  const [xisNext, setXIsNext] = useState(true);
+function Board({ xisNext, square, onPlay }) {
   const winner = calculateWinner(square);
   let status;
   if (winner) {
@@ -31,8 +30,7 @@ export default function Board() {
     } else {
       nextSquars[i] = "O";
     }
-    setSquare(nextSquars);
-    setXIsNext(!xisNext);
+    onPlay(nextSquars);
   }
   return (
     <>
@@ -54,6 +52,51 @@ export default function Board() {
         <Square value={square[8]} onSquareClick={() => handleClick(8)}></Square>
       </div>
     </>
+  );
+}
+// appp
+export default function Game() {
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [xisNext, setXIsNext] = useState(true);
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquares = history[currentMove];
+
+  function handlePlay(nextSquars) {
+    setXIsNext(!xisNext);
+    const nextHitory = [...history.slice(0, currentMove + 1), nextSquars];
+    setHistory(nextHitory);
+    setCurrentMove(nextHitory.length - 1);
+  }
+  function jumpTo(move) {
+    setCurrentMove(move);
+    setXIsNext(move % 2 === 0);
+  }
+  const moves = history.map((square, move) => {
+    let description;
+    if (move > 0) {
+      description = `Go To the move # ${move} `;
+    } else {
+      description = `Go to Start the Game`;
+    }
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+  return (
+    <div>
+      <div>
+        <Board
+          xisNext={xisNext}
+          square={currentSquares}
+          onPlay={handlePlay}
+        ></Board>
+      </div>
+      <div>
+        <ol>{moves}</ol>
+      </div>
+    </div>
   );
 }
 
