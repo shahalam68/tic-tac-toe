@@ -54,7 +54,7 @@ function Board({ xisNext, square, onPlay }) {
     </>
   );
 }
-// appp cxvmggfdg
+// appp cxvmggfdjjjgddd
 export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [xisNext, setXIsNext] = useState(true);
